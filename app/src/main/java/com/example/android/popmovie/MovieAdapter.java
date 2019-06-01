@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
@@ -42,7 +44,9 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         //assigning data to their appropriate view
         ImageView imageView = (ImageView) convertView.findViewById(R.id.movie_image);
-        imageView.setImageResource(currentMovie.getmMovieImage());
+        Picasso.get()
+                .load(currentMovie.getmMovieImage())
+                .into(imageView);
 
         return convertView;
     }

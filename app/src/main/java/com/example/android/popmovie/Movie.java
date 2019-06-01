@@ -9,9 +9,9 @@ public class Movie implements Parcelable {
 
     private String mtitle;
     private String mOverview;
-    private int mRating;
+    private String mRating;
     private String mDateRelease;
-    private int mMovieImage; //For drawable reference id for image
+    private String mMovieImage; //For drawable reference id for image
 
 
     /**
@@ -25,7 +25,7 @@ public class Movie implements Parcelable {
      *
      */
 
-    public Movie(String title, String overview, int rating, String dateRelease, int image){
+    public Movie(String title, String overview, String rating, String dateRelease, String image){
 
         this.mtitle = title;
         this.mOverview = overview;
@@ -38,9 +38,9 @@ public class Movie implements Parcelable {
     private Movie (Parcel parcel){
         mtitle = parcel.readString();
         mOverview = parcel.readString();
-        mRating = parcel.readInt();
+        mRating = parcel.readString();
         mDateRelease = parcel.readString();
-        mMovieImage = parcel.readInt();
+        mMovieImage = parcel.readString();
     }
 
     @Override
@@ -52,9 +52,9 @@ public class Movie implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mtitle);
         dest.writeString(mOverview);
-        dest.writeInt(mRating);
+        dest.writeString(mRating);
         dest.writeString(mDateRelease);
-        dest.writeInt(mMovieImage);
+        dest.writeString(mMovieImage);
     }
 
     public final Parcelable.Creator<Movie> CREATOR= new Parcelable.Creator<Movie>(){
@@ -78,7 +78,7 @@ public class Movie implements Parcelable {
         return mOverview;
     }
 
-    public int getmRating() {
+    public String getmRating() {
         return mRating;
     }
 
@@ -86,7 +86,7 @@ public class Movie implements Parcelable {
         return mDateRelease;
     }
 
-    public int getmMovieImage() {
+    public String getmMovieImage() {
         return mMovieImage;
     }
 }
