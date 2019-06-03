@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -155,9 +156,9 @@ public class NetworkUtils {
 
     /**
      * Query the Movie database and return a list of {@link Movie} objects.
+     * for most popular Movies
      */
-
-    public static List<Movie> fetchMovieData (String requestUrl){
+    public static ArrayList<Movie> fetchPopMovieData (){
 
         //Create a Url Object
         URL url = buildUrl_mostPopular_movie();
@@ -172,7 +173,30 @@ public class NetworkUtils {
         }
 
         //Extract data needed from the json response
-        List<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+
+        return movies;
+    }
+
+    /**
+     * Query the Movie database and return a list of {@link Movie} objects.
+     * for most rated Movies
+     */
+    public static ArrayList<Movie> fetchRatedMovieData (){
+        //create a Url Object
+        URL url = buildUrl_mostRated_movie();
+
+        //Perform HTTP request to the url and return JSON response back
+        String jsonREsponse = null;
+
+        try {
+            jsonREsponse = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            Log.e(TAG, "Problem making the HTTP request.", e);
+        }
+
+        //Extract data needed from the json response
+        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
 
         return movies;
     }
