@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
-    android:id="@+id/fragment"
+<GridView
+    android:id="@+id/movie_grid"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.example.android.popmovie.MovieFragment"
-    tools:layout="@layout/fragment_movie">
-</fragment>
+    tools:context=".MainActivity"
+    android:columnWidth="150dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="4dp"
+    android:horizontalSpacing="4dp"
+    android:stretchMode="columnWidth">
+</GridView>

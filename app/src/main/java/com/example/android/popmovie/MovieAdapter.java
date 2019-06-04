@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
@@ -25,7 +26,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
      * @param context
      * @param movie
      */
-    public MovieAdapter(Activity context, List<Movie> movie ) {
+    public MovieAdapter(Activity context, ArrayList<Movie> movie ) {
         super(context,0, movie);
     }
 

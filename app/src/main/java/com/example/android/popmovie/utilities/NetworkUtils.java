@@ -34,6 +34,8 @@ public class NetworkUtils {
     private static String API_KEY = "api_key";
     private static String KEY = "4c847680f6bc9cd56eff4d157bedc568";
 
+    //private static String URLMOV = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=4c847680f6bc9cd56eff4d157bedc568";
+
 
     /**
      * Build Url to use to talk to the movie database. This one is to get
@@ -158,7 +160,9 @@ public class NetworkUtils {
      * Query the Movie database and return a list of {@link Movie} objects.
      * for most popular Movies
      */
-    public static ArrayList<Movie> fetchPopMovieData (){
+    public static ArrayList<Movie> fetchPopMovieData () throws MalformedURLException {
+
+        //URL urlK = new URL(URLMOV);
 
         //Create a Url Object
         URL url = buildUrl_mostPopular_movie();
