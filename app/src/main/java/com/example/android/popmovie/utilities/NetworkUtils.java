@@ -160,7 +160,7 @@ public class NetworkUtils {
      * Query the Movie database and return a list of {@link Movie} objects.
      * for most popular Movies
      */
-    public static ArrayList<Movie> fetchPopMovieData () throws MalformedURLException {
+    public static List<String> fetchPopMovieData () throws MalformedURLException {
 
         //URL urlK = new URL(URLMOV);
 
@@ -177,7 +177,8 @@ public class NetworkUtils {
         }
 
         //Extract data needed from the json response
-        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+        List<String> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+
 
         return movies;
     }
@@ -186,7 +187,7 @@ public class NetworkUtils {
      * Query the Movie database and return a list of {@link Movie} objects.
      * for most rated Movies
      */
-    public static ArrayList<Movie> fetchRatedMovieData (){
+    public static List<String> fetchRatedMovieData (){
         //create a Url Object
         URL url = buildUrl_mostRated_movie();
 
@@ -200,7 +201,7 @@ public class NetworkUtils {
         }
 
         //Extract data needed from the json response
-        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+        List<String> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
 
         return movies;
     }
