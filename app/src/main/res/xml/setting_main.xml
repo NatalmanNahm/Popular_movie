@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Popular Movie Setting">
+
+    <ListPreference
+        android:defaultValue="@string/settings_sort_by_most_popular_label"
+        android:entries="@array/settings_order_by_labels"
+        android:entryValues="@array/settings_order_by_labels"
+        android:key="sort_by"
+        android:title="Sort By"/>
+
+</PreferenceScreen>

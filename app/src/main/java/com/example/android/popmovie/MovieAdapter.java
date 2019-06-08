@@ -36,8 +36,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.MovieViewHolder movieViewHlder, int i) {
         String currentMovieImage = mMoviedata.get(i);
-        String image = IMAGE_URL + IMAGE_SIZE + currentMovieImage;
-        Picasso.get().load(image).into(movieViewHlder.mImage);
+        Picasso.get().load(currentMovieImage).into(movieViewHlder.mImage);
     }
 
     @Override
