@@ -31,7 +31,7 @@ public class OpenJsonUtils {
 
     }
 
-    public static List<String> extractFeatureFromJson(String json){
+    public static ArrayList<Movie> extractFeatureFromJson(String json){
 
         //If the string Json is empty the return early
         if (TextUtils.isEmpty(json)){
@@ -39,7 +39,7 @@ public class OpenJsonUtils {
         }
 
         //create empty ArrayList of that will hold our data of movie needed
-        List<String> arrayList = new ArrayList<>();
+        ArrayList<Movie> arrayList = new ArrayList<>();
 
         //Try to parse the Json and if the is a problem the JSONException will be Thrown.
         //It will be then catch in the catch block, so the app doesn't crash
@@ -54,17 +54,17 @@ public class OpenJsonUtils {
             for (int i = 0; i<results.length(); i++){
                 JSONObject jsonObject = results.getJSONObject(i);
 
-//                String title = jsonObject.getString("title");
-//                String overview = jsonObject.getString("overview");
-//                String rating = jsonObject.getString("vote_average");
-//                String dateRelease = jsonObject.getString("release_date");
+                String title = jsonObject.getString("title");
+                String overview = jsonObject.getString("overview");
+                String rating = jsonObject.getString("vote_average");
+                String dateRelease = jsonObject.getString("release_date");
                 String image = jsonObject.getString("poster_path");
 
                 String imageConstruct = IMAGE_URL + IMAGE_SIZE + image;
 
 
 
-                arrayList.add(imageConstruct);
+                arrayList.add(new Movie(title, overview, rating, dateRelease, imageConstruct));
 
             }
 

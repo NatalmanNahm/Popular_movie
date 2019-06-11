@@ -6,12 +6,20 @@ import android.os.Parcelable;
 public class Movie implements Parcelable {
 
     /** Initializing data to be used in the constructor */
-
     private String mtitle;
     private String mOverview;
     private String mRating;
     private String mDateRelease;
     private String mMovieImage; //For drawable reference id for image
+
+
+    /**
+     * Creating a Movie Constructor with only one param (Movie)
+     * @param image
+     */
+    public Movie(String image){
+        this.mMovieImage = image;
+    }
 
 
     /**
@@ -24,11 +32,6 @@ public class Movie implements Parcelable {
      * @param image
      *
      */
-
-    public Movie(String image){
-        this.mMovieImage = image;
-    }
-
     public Movie(String title, String overview, String rating, String dateRelease, String image){
 
         this.mtitle = title;
@@ -39,6 +42,7 @@ public class Movie implements Parcelable {
 
     }
 
+    //Creating parcel to be read from
     private Movie (Parcel parcel){
         mtitle = parcel.readString();
         mOverview = parcel.readString();
@@ -52,6 +56,7 @@ public class Movie implements Parcelable {
         return 0;
     }
 
+    //Writing to the parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mtitle);
@@ -61,6 +66,9 @@ public class Movie implements Parcelable {
         dest.writeString(mMovieImage);
     }
 
+    /**
+     * Creating a parcel to be used to in case we need to use it on saveInstant
+     */
     public final Parcelable.Creator<Movie> CREATOR= new Parcelable.Creator<Movie>(){
 
         @Override
@@ -74,6 +82,9 @@ public class Movie implements Parcelable {
         }
     };
 
+    /**
+     * Creating getters for our movie variables
+     */
     public String getMtitle() {
         return mtitle;
     }

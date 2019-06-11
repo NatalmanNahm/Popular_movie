@@ -55,15 +55,16 @@ public class NetworkUtils{
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
+    //base URL to be used to get the movie data
     private static final String POP_MOVIE_URL = "http://api.themoviedb.org/3/discover/movie";
 
+    //Parameter to be used to query data from the movie api
+    //Will be append onto the base URL
     private static String SORT_BY = "sort_by";
     private static String POP = "popularity.desc";
     private static String MOST_RATED = "vote_average.desc";
     private static String API_KEY = "api_key";
     private static String KEY = "4c847680f6bc9cd56eff4d157bedc568";
-
-    //private static String URLMOV = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=4c847680f6bc9cd56eff4d157bedc568";
 
 
     /**
@@ -73,6 +74,8 @@ public class NetworkUtils{
      * @return the url to use to query the movie database
      */
     public static URL buildUrl_mostPopular_movie (){
+
+        //Build the URL with the query parameter
         Uri uriBuilder = Uri.parse(POP_MOVIE_URL).buildUpon()
                 .appendQueryParameter(SORT_BY, POP)
                 .appendQueryParameter(API_KEY, KEY)
@@ -100,6 +103,8 @@ public class NetworkUtils{
      * @return
      */
     public static URL buildUrl_mostRated_movie (){
+
+        //Build the URL with the query parameter
         Uri uriBuilder = Uri.parse(POP_MOVIE_URL).buildUpon()
                 .appendQueryParameter(SORT_BY, MOST_RATED)
                 .appendQueryParameter(API_KEY, KEY)
@@ -138,6 +143,8 @@ public class NetworkUtils{
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
 
+        //Trying to get connection the server and if the status is 200
+        //That means the connection was a success and then we can retrieve data needed
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000 /*milliseconds*/);
@@ -189,9 +196,7 @@ public class NetworkUtils{
      * Query the Movie database and return a list of {@link Movie} objects.
      * for most popular Movies
      */
-    public static List<String> fetchPopMovieData () throws MalformedURLException {
-
-        //URL urlK = new URL(URLMOV);
+    public static ArrayList<Movie> fetchPopMovieData () throws MalformedURLException {
 
         //Create a Url Object
         URL url = buildUrl_mostPopular_movie();
@@ -206,7 +211,7 @@ public class NetworkUtils{
         }
 
         //Extract data needed from the json response
-        List<String> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
 
 
         return movies;
@@ -216,7 +221,7 @@ public class NetworkUtils{
      * Query the Movie database and return a list of {@link Movie} objects.
      * for most rated Movies
      */
-    public static List<String> fetchRatedMovieData (){
+    public static ArrayList<Movie> fetchRatedMovieData (){
         //create a Url Object
         URL url = buildUrl_mostRated_movie();
 
@@ -230,7 +235,7 @@ public class NetworkUtils{
         }
 
         //Extract data needed from the json response
-        List<String> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
+        ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
 
         return movies;
     }

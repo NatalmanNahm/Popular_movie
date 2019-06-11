@@ -27,13 +27,18 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+import butterknife.Bind;
 
-    private MovieAdapter mMovieAdapter;
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
+
+    //Initializing
     private RecyclerView mRecyclerView;
-
+    private MovieAdapter mMovieAdapter;
+    private ArrayList<Movie> mMovie = new ArrayList<>();
     private TextView mErrorMessage;
     private ProgressBar mLoading;
+
+    private GridLayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +47,18 @@ public class MainActivity extends AppCompatActivity{
 
         //Getting reference of the recycleView so we can set adapter it
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle);
-
         //used to display the the error message and hide it when needed
         mErrorMessage = (TextView) findViewById(R.id.error_message);
 
         //Creating a gridview where we can add all the movie item we get from the movie data
-        GridLayoutManager gridLayoutManager =
-                new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
+        //or Get back to where we left by saving a reference to the gridView
+        if (savedInstanceState == null){
+            gridLayoutManager =
+                    new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
+        }else {
+            gridLayoutManager.onSaveInstanceState();
+        }
+
 
         //set the gridview to the recycleView
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -56,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         mRecyclerView.setHasFixedSize(true);
 
         //create adapter
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(getApplicationContext(), mMovie,this);
 
         //set Adapter
         mRecyclerView.setAdapter(mMovieAdapter);
@@ -101,7 +111,7 @@ public class MainActivity extends AppCompatActivity{
         /* Then, show the error */
         mErrorMessage.setVisibility(View.VISIBLE);
     }
-    public class FetchMovieTask extends AsyncTask<String, Void, List<String>>{
+    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>>{
 
         @Override
         protected void onPreExecute() {
@@ -110,11 +120,14 @@ public class MainActivity extends AppCompatActivity{
         }
 
         @Override
-        protected List<String> doInBackground(String... params)
+        protected ArrayList<Movie> doInBackground(String... params)
         {
-            List<String> movies = null;
+            ArrayList<Movie> movies = null;
             String sorted = params[0];
             try {
+
+                //Populating the UI based on the choice of the user "Most Popular"
+                //or "Most Rated".
                 if (sorted.equalsIgnoreCase("most popular")){
                     movies = NetworkUtils.fetchPopMovieData();
                 }else {
@@ -129,9 +142,11 @@ public class MainActivity extends AppCompatActivity{
         }
 
         @Override
-        protected void onPostExecute(List<String> movies) {
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            //Hiding the progress bar
             mLoading.setVisibility(View.INVISIBLE);
             if (movies!= null && !movies.isEmpty()) {
+                //Displaying the movie image to the user
                 showMovieDataView();
                 mMovieAdapter.setmMoviedata(movies);
             }else {
@@ -155,5 +170,20 @@ public class MainActivity extends AppCompatActivity{
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onClick(String image, String title, String overview, String rating, String date ){
+        Context context = this;
+        Class destinationClass = MovieDetails.class;
+        //Creating Intent
+        Intent intent = new Intent(context, destinationClass);
+        //Parsing the image, title, overview, rating, and date variable
+        //detail activity
+        intent.putExtra("image", image);
+        intent.putExtra("title", title);
+        intent.putExtra("overview", overview);
+        intent.putExtra("rating", rating);
+        intent.putExtra("date", date);
+        startActivity(intent);
     }
 }
