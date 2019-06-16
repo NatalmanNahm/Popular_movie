@@ -61,8 +61,8 @@ public class NetworkUtils{
     //Parameter to be used to query data from the movie api
     //Will be append onto the base URL
     private static String SORT_BY = "sort_by";
-    private static String POP = "popularity.desc";
-    private static String MOST_RATED = "vote_average.desc";
+    private static String POP = "popular";
+    private static String MOST_RATED = "top_rated";
     private static String API_KEY = "api_key";
     private static String KEY = "4c847680f6bc9cd56eff4d157bedc568";
 
