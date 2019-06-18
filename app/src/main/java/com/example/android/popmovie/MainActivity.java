@@ -1,23 +1,17 @@
 package com.example.android.popmovie;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,9 +19,6 @@ import com.example.android.popmovie.utilities.NetworkUtils;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.Bind;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -52,13 +43,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         //Creating a gridview where we can add all the movie item we get from the movie data
         //or Get back to where we left by saving a reference to the gridView
-        if (savedInstanceState == null){
-            gridLayoutManager =
-                    new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
-        }else {
-            gridLayoutManager.onSaveInstanceState();
-        }
-
+        gridLayoutManager =
+                new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
 
         //set the gridview to the recycleView
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -74,7 +60,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         //creating a progress bar that let the user know that there data is been loaded
         mLoading = (ProgressBar) findViewById(R.id.loading_circle);
 
-        loadMovieData();
+        if (savedInstanceState == null || !savedInstanceState.containsKey("movie")){
+            loadMovieData();
+        }else {
+            mMovie = savedInstanceState.getParcelableArrayList("movie");
+            loadMovieData();
+        }
+
+
     }
 
     /**
@@ -122,23 +115,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected ArrayList<Movie> doInBackground(String... params)
         {
-            ArrayList<Movie> movies = null;
+            mMovie = null;
             String sorted = params[0];
             try {
-
                 //Populating the UI based on the choice of the user "Most Popular"
                 //or "Most Rated".
                 if (sorted.equalsIgnoreCase("most popular")){
-                    movies = NetworkUtils.fetchPopMovieData();
+                    mMovie = NetworkUtils.fetchPopMovieData();
                 }else {
-                    movies = NetworkUtils.fetchRatedMovieData();
+                    mMovie = NetworkUtils.fetchRatedMovieData();
                 }
 
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            return movies;
+            return mMovie;
         }
 
         @Override
@@ -165,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.settings) {
-            Intent settingsIntent = new Intent(this, Setting_menu.class);
+            Intent settingsIntent = new Intent(this, SettingMenu.class);
             startActivity(settingsIntent);
             return true;
         }
@@ -185,5 +177,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         intent.putExtra("rating", rating);
         intent.putExtra("date", date);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("movie", mMovie);
+        super.onSaveInstanceState(outState);
     }
 }

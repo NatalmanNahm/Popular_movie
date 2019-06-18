@@ -22,7 +22,7 @@
             </meta-data>
         </activity>
         <activity
-            android:name=".Setting_menu"
+            android:name=".SettingMenu"
             android:label="Sort By"
             android:screenOrientation="portrait">
             <meta-data

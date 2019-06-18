@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 
+import com.example.android.popmovie.BuildConfig;
 import com.example.android.popmovie.MainActivity;
 import com.example.android.popmovie.Movie;
 
@@ -56,7 +57,8 @@ public class NetworkUtils{
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     //base URL to be used to get the movie data
-    private static final String POP_MOVIE_URL = "http://api.themoviedb.org/3/discover/movie";
+    //private static final String POP_MOVIE_URL = "http://api.themoviedb.org/3/discover/movie";
+    private static final String POP_MOVIE_URL = "https://api.themoviedb.org/3/movie";
 
     //Parameter to be used to query data from the movie api
     //Will be append onto the base URL
@@ -64,7 +66,7 @@ public class NetworkUtils{
     private static String POP = "popular";
     private static String MOST_RATED = "top_rated";
     private static String API_KEY = "api_key";
-    private static String KEY = "4c847680f6bc9cd56eff4d157bedc568";
+    private static String KEY = BuildConfig.myMovieDbApiKey;
 
 
     /**
@@ -77,7 +79,7 @@ public class NetworkUtils{
 
         //Build the URL with the query parameter
         Uri uriBuilder = Uri.parse(POP_MOVIE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY, POP)
+                .appendPath(POP)
                 .appendQueryParameter(API_KEY, KEY)
                 .build();
 
@@ -106,7 +108,7 @@ public class NetworkUtils{
 
         //Build the URL with the query parameter
         Uri uriBuilder = Uri.parse(POP_MOVIE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY, MOST_RATED)
+                .appendPath(MOST_RATED)
                 .appendQueryParameter(API_KEY, KEY)
                 .build();
 

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:text="An error has occurred, please try again"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:visibility="invisible"/>
     <ProgressBar
         android:id="@+id/loading_circle"
