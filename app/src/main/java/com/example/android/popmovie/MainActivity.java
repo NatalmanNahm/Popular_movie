@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
     @Override
-    public void onClick(String image, String title, String overview, String rating, String date ){
+    public void onClick(String image, String title, String overview, String rating, String date, String id ){
         Context context = this;
         Class destinationClass = MovieDetails.class;
         //Creating Intent
@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         intent.putExtra("overview", overview);
         intent.putExtra("rating", rating);
         intent.putExtra("date", date);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 

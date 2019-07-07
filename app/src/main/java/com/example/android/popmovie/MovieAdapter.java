@@ -32,7 +32,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler{
-        void onClick(String image, String title, String overView, String rating, String date);
+        void onClick(String image, String title, String overView, String rating, String date, String id);
     }
 
     /** OnClick Handelr for the adapter
@@ -85,7 +85,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         public MovieViewHolder(View view){
             super(view);
             mContext = view.getContext();
-            ButterKnife.bind(this,view);
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
 
         }
@@ -103,12 +103,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             Movie movie = mMovie.get(adapterPosition);
+
             String image = movie.getmMovieImage();
             String title = movie.getMtitle();
             String rating = movie.getmRating();
             String overview = movie.getmOverview();
             String dateRealease = movie.getmDateRelease();
-            mClickHandler.onClick(image,title,overview,rating,dateRealease);
+            String id = movie.getmMovieId();
+
+            mClickHandler.onClick(image, title, overview, rating, dateRealease, id);
         }
     }
 }

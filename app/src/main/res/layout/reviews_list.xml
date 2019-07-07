@@ -12,24 +12,28 @@
         android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#C62828"
-        android:layout_marginRight="15dp"
-        android:layout_marginLeft="15dp"
+        android:background="#6A1B9A"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         />
-
     <TextView
-            android:id="@+id/trailer_label"
+        android:id="@+id/author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="Trailer III" />
-
+        tools:text="Kerry, James"
+        android:textStyle="bold"
+        android:textColor="#C62828"
+        android:paddingLeft="16dp"
+        android:paddingBottom="8dp"
+        android:textSize="20sp"
+        />
     <TextView
-        android:id="@+id/name_trailer"
+        android:id="@+id/content_review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        tools:text="Shazam and spider"
-        android:layout_gravity="center"/>
-
+        tools:text="something something , something"
+        android:textStyle="italic"
+        android:textColor="#263238"
+        android:paddingLeft="30dp"
+        android:textSize="18dp"/>
 </LinearLayout>

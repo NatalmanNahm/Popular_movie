@@ -10,6 +10,7 @@ public class Movie implements Parcelable {
     private String mOverview;
     private String mRating;
     private String mDateRelease;
+    private String mMovieId;
     private String mMovieImage; //For drawable reference id for image
 
 
@@ -30,15 +31,17 @@ public class Movie implements Parcelable {
      * @param rating
      * @param dateRelease
      * @param image
-     *
+     * @param id
      */
-    public Movie(String title, String overview, String rating, String dateRelease, String image){
+    public Movie(String title, String overview, String rating, String dateRelease, String image, String id){
 
         this.mtitle = title;
         this.mOverview = overview;
         this.mRating = rating;
         this.mDateRelease = dateRelease;
         this.mMovieImage = image;
+        this.mMovieId = id;
+
 
     }
 
@@ -49,6 +52,7 @@ public class Movie implements Parcelable {
         mRating = parcel.readString();
         mDateRelease = parcel.readString();
         mMovieImage = parcel.readString();
+        mMovieId = parcel.readString();
     }
 
     @Override
@@ -64,6 +68,7 @@ public class Movie implements Parcelable {
         dest.writeString(mRating);
         dest.writeString(mDateRelease);
         dest.writeString(mMovieImage);
+        dest.writeString(mMovieId);
     }
 
     /**
@@ -104,4 +109,6 @@ public class Movie implements Parcelable {
     public String getmMovieImage() {
         return mMovieImage;
     }
+
+    public String getmMovieId() {return mMovieId;}
 }

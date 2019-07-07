@@ -31,6 +31,8 @@ import android.view.Display;
 import com.example.android.popmovie.BuildConfig;
 import com.example.android.popmovie.MainActivity;
 import com.example.android.popmovie.Movie;
+import com.example.android.popmovie.Reviews;
+import com.example.android.popmovie.Trailers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,12 +59,12 @@ public class NetworkUtils{
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     //base URL to be used to get the movie data
-    //private static final String POP_MOVIE_URL = "http://api.themoviedb.org/3/discover/movie";
     private static final String POP_MOVIE_URL = "https://api.themoviedb.org/3/movie";
 
     //Parameter to be used to query data from the movie api
     //Will be append onto the base URL
-    private static String SORT_BY = "sort_by";
+    private static String VIDEOS = "videos";
+    private static String REVIEWS = "reviews";
     private static String POP = "popular";
     private static String MOST_RATED = "top_rated";
     private static String API_KEY = "api_key";
@@ -123,6 +125,52 @@ public class NetworkUtils{
 
         Log.v(TAG, "Built URI " + url);
 
+        return url;
+    }
+
+
+    /**
+     * Using id to get trailer key
+     * to build the youtube link.
+     * @param id
+     * @return
+     */
+    public static URL build_trailer (String id){
+        Uri uri = Uri.parse(POP_MOVIE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(VIDEOS)
+                .appendQueryParameter(API_KEY, KEY)
+                .build();
+
+        URL url = null;
+
+        try {
+            url = new URL(uri.toString());
+
+        } catch (MalformedURLException e) {
+            Log.v(TAG, "Built URI" + url);
+        }
+        return url;
+    }
+
+    /**
+     * Building the Url to request the review data
+     * @param id
+     * @return
+     */
+    public static URL build_review (String id){
+        Uri uri = Uri.parse(POP_MOVIE_URL).buildUpon()
+                .appendPath(id)
+                .appendPath(REVIEWS)
+                .appendQueryParameter(API_KEY, KEY)
+                .build();
+        URL url = null;
+
+        try {
+            url = new URL(uri.toString());
+        }catch (MalformedURLException e) {
+            Log.v(TAG, "Built URI" + url);
+        }
         return url;
     }
 
@@ -240,5 +288,51 @@ public class NetworkUtils{
         ArrayList<Movie> movies = OpenJsonUtils.extractFeatureFromJson(jsonREsponse);
 
         return movies;
+    }
+
+    /**
+     * Query the Trailer data and then return a list of Trailer data
+     * @param id
+     * @return
+     */
+    public static ArrayList<Trailers> fetchTrailerData(String id){
+        //create a url Object
+        URL url = build_trailer(id);
+
+        String jsonRespnse = null;
+
+        try {
+            jsonRespnse = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            Log.e(TAG, "Problem making the HTTP request", e);
+        }
+
+
+        ArrayList<Trailers> arrayList = OpenJsonUtils.jsonTrailerOpener(jsonRespnse);
+
+        return arrayList;
+    }
+
+    /**
+     * Query the Review data and then return a list of Review object
+     * @param id
+     * @return
+     */
+    public static ArrayList <Reviews> fetchReviewsData (String id){
+
+        URL url = build_review(id);
+
+        String jsonReponse = null;
+
+        try {
+            jsonReponse = getResponseFromHttpUrl(url);
+
+        }catch (IOException e) {
+            Log.e(TAG, "Problem making the HTTP request", e);
+        }
+
+        ArrayList<Reviews> reviews = OpenJsonUtils.jsonReviewsOpener(jsonReponse);
+
+        return reviews;
     }
 }
