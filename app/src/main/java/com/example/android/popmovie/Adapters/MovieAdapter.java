@@ -1,4 +1,4 @@
-package com.example.android.popmovie;
+package com.example.android.popmovie.Adapters;
 
 
 import android.content.Context;
@@ -9,8 +9,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.example.android.popmovie.Movie;
+import com.example.android.popmovie.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder>{
 
-    private ArrayList<Movie> mMovie = new ArrayList<>();
+    private List<Movie> mMovie = new ArrayList<>();
     private Context mContext;
 
     //Create an onClickHandler to make it easier for the
@@ -32,14 +33,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
      * The interface that receives onClick messages.
      */
     public interface MovieAdapterOnClickHandler{
-        void onClick(String image, String title, String overView, String rating, String date, String id);
+        void onClick(String image, String title, String overView, String rating, String date, String id, boolean isFav, String buttonText);
     }
 
     /** OnClick Handelr for the adapter
      *
      * @param clickHandler Single handler is called when an item is clicked
      */
-    public MovieAdapter (Context context, ArrayList<Movie> movie, MovieAdapterOnClickHandler clickHandler){
+    public MovieAdapter (Context context, List<Movie> movie,
+                         MovieAdapterOnClickHandler clickHandler){
         mContext = context;
         mMovie = movie;
         mClickHandler = clickHandler;
@@ -70,9 +72,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         return mMovie.size();
     }
 
-    public void setmMoviedata(ArrayList<Movie> movie){
+    public void setmMoviedata(List<Movie> movie){
         mMovie = movie;
         notifyDataSetChanged();
+    }
+
+    public List<Movie> getMovie(){
+        return mMovie;
     }
 
     /**
@@ -91,8 +97,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
         //This is used to populate the thumbnails for our main page
         public void bindMovie(Movie movie){
-
-            Picasso.get().load(movie.getmMovieImage()).into(mImage);
+            Picasso.get().load(movie.getImage()).into(mImage);
         }
 
         /** This get called by the child views during a click
@@ -104,14 +109,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             int adapterPosition = getAdapterPosition();
             Movie movie = mMovie.get(adapterPosition);
 
-            String image = movie.getmMovieImage();
-            String title = movie.getMtitle();
-            String rating = movie.getmRating();
-            String overview = movie.getmOverview();
-            String dateRealease = movie.getmDateRelease();
-            String id = movie.getmMovieId();
+            String image = movie.getImage();
+            String title = movie.getTitle();
+            String rating = movie.getRating();
+            String overview = movie.getOverview();
+            String dateRealease = movie.getDateRelease();
+            String id = movie.getId();
+            String FavText = movie.getButtonText();
+            boolean isFav = movie.isFav();
 
-            mClickHandler.onClick(image, title, overview, rating, dateRealease, id);
+            mClickHandler.onClick(image, title, overview, rating, dateRealease, id, isFav, FavText);
         }
     }
 }

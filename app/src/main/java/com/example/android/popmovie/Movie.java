@@ -1,17 +1,27 @@
 package com.example.android.popmovie;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
+@Entity(tableName = "FavoriteMovie")
 public class Movie implements Parcelable {
 
     /** Initializing data to be used in the constructor */
-    private String mtitle;
-    private String mOverview;
-    private String mRating;
-    private String mDateRelease;
-    private String mMovieId;
-    private String mMovieImage; //For drawable reference id for image
+    @PrimaryKey
+    @NonNull
+    private String id;
+    private String title;
+    private String image;
+    private String overview;
+    private String rating;
+    private String dateRelease;
+    private boolean isFav;
+    private String buttonText;
+    //For drawable reference id for image
 
 
     /**
@@ -19,40 +29,46 @@ public class Movie implements Parcelable {
      * @param image
      */
     public Movie(String image){
-        this.mMovieImage = image;
+        this.image = image;
     }
 
 
     /**
      * Creating a constructor for our movie class
      *
-     * @param title
-     * @param overview
-     * @param rating
-     * @param dateRelease
-     * @param image
-     * @param id
+     * @param titleMovie
+     * @param overviewMovie
+     * @param ratingMovie
+     * @param dateReleaseMovie
+     * @param imageMovie
+     * @param idMovie
+     * @param fav
+     * @param text
      */
-    public Movie(String title, String overview, String rating, String dateRelease, String image, String id){
 
-        this.mtitle = title;
-        this.mOverview = overview;
-        this.mRating = rating;
-        this.mDateRelease = dateRelease;
-        this.mMovieImage = image;
-        this.mMovieId = id;
+    public Movie(@NonNull String idMovie, String titleMovie, String imageMovie, String overviewMovie,
+                 String ratingMovie, String dateReleaseMovie, boolean fav, String text){
 
+        id = idMovie;
+        title = titleMovie;
+        image = imageMovie;
+        overview = overviewMovie;
+        rating = ratingMovie;
+        dateRelease = dateReleaseMovie;
+        isFav = fav;
+        buttonText = text;
 
     }
 
     //Creating parcel to be read from
     private Movie (Parcel parcel){
-        mtitle = parcel.readString();
-        mOverview = parcel.readString();
-        mRating = parcel.readString();
-        mDateRelease = parcel.readString();
-        mMovieImage = parcel.readString();
-        mMovieId = parcel.readString();
+        title = parcel.readString();
+        overview = parcel.readString();
+        rating = parcel.readString();
+        dateRelease = parcel.readString();
+        image = parcel.readString();
+        id = parcel.readString();
+        buttonText = parcel.readString();
     }
 
     @Override
@@ -63,17 +79,19 @@ public class Movie implements Parcelable {
     //Writing to the parcel
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mtitle);
-        dest.writeString(mOverview);
-        dest.writeString(mRating);
-        dest.writeString(mDateRelease);
-        dest.writeString(mMovieImage);
-        dest.writeString(mMovieId);
+        dest.writeString(title);
+        dest.writeString(overview);
+        dest.writeString(rating);
+        dest.writeString(dateRelease);
+        dest.writeString(image);
+        dest.writeString(id);
+        dest.writeString(buttonText);
     }
 
     /**
      * Creating a parcel to be used to in case we need to use it on saveInstant
      */
+    @Ignore
     public final Parcelable.Creator<Movie> CREATOR= new Parcelable.Creator<Movie>(){
 
         @Override
@@ -90,25 +108,67 @@ public class Movie implements Parcelable {
     /**
      * Creating getters for our movie variables
      */
-    public String getMtitle() {
-        return mtitle;
+    public String getId() {
+        return id;
     }
 
-    public String getmOverview() {
-        return mOverview;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getmRating() {
-        return mRating;
+    public String getTitle() {
+        return title;
     }
 
-    public String getmDateRelease() {
-        return mDateRelease;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getmMovieImage() {
-        return mMovieImage;
+    public String getImage() {
+        return image;
     }
 
-    public String getmMovieId() {return mMovieId;}
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getDateRelease() {
+        return dateRelease;
+    }
+
+    public void setDateRelease(String dateRelease) {
+        this.dateRelease = dateRelease;
+    }
+
+    public boolean isFav() {
+        return isFav;
+    }
+
+    public void setFav(boolean fav) {
+        isFav = fav;
+    }
+
+    public String getButtonText() {
+        return buttonText;
+    }
+
+    public void setButtonText(String buttonText) {
+        this.buttonText = buttonText;
+    }
 }

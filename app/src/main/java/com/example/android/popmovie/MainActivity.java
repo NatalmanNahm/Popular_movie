@@ -1,10 +1,14 @@
 package com.example.android.popmovie;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,21 +19,30 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.popmovie.Adapters.MovieAdapter;
+import com.example.android.popmovie.Database.AppDatabase;
 import com.example.android.popmovie.utilities.NetworkUtils;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     //Initializing
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
-    private ArrayList<Movie> mMovie = new ArrayList<>();
+    private List<Movie> mMovie = new ArrayList<>();
     private TextView mErrorMessage;
     private ProgressBar mLoading;
 
     private GridLayoutManager gridLayoutManager;
+
+    //create AppDatabase member variable for the Database
+    private AppDatabase mDb;
+
+    private SharedPreferences sharedPrefs;
+    private String sortBy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle);
         //used to display the the error message and hide it when needed
         mErrorMessage = (TextView) findViewById(R.id.error_message);
+
+        //Initialize member variable for the data base
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         //Creating a gridview where we can add all the movie item we get from the movie data
         //or Get back to where we left by saving a reference to the gridView
@@ -54,12 +70,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         //create adapter
         mMovieAdapter = new MovieAdapter(getApplicationContext(), mMovie,this);
 
+
         //set Adapter
         mRecyclerView.setAdapter(mMovieAdapter);
 
         //creating a progress bar that let the user know that there data is been loaded
         mLoading = (ProgressBar) findViewById(R.id.loading_circle);
 
+        //Saving the position where we where at
         if (savedInstanceState == null || !savedInstanceState.containsKey("movie")){
             loadMovieData();
         }else {
@@ -67,20 +85,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             loadMovieData();
         }
 
-
     }
 
     /**
      * helper method to Load data we get from movie data
      */
     private void loadMovieData() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String sortBy = sharedPrefs.getString("sort_by",
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sortBy = sharedPrefs.getString("sort_by",
                 "@string/settings_sort_by_most_popular_label");
 
         showMovieDataView();
 
         new FetchMovieTask().execute(sortBy);
+
     }
 
     /**
@@ -104,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         /* Then, show the error */
         mErrorMessage.setVisibility(View.VISIBLE);
     }
-    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>>{
+    public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>>{
 
         @Override
         protected void onPreExecute() {
@@ -113,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected ArrayList<Movie> doInBackground(String... params)
+        protected List<Movie> doInBackground(String... params)
         {
             mMovie = null;
             String sorted = params[0];
@@ -122,8 +141,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 //or "Most Rated".
                 if (sorted.equalsIgnoreCase("most popular")){
                     mMovie = NetworkUtils.fetchPopMovieData();
-                }else {
+                }else if (sorted.equalsIgnoreCase("most rated")){
                     mMovie = NetworkUtils.fetchRatedMovieData();
+                } else {
+                    mMovie = mDb.favoriteMovieDao().laodAllFavMovies();
                 }
 
 
@@ -134,18 +155,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> movies) {
+        protected void onPostExecute(final List<Movie> movies) {
             //Hiding the progress bar
             mLoading.setVisibility(View.INVISIBLE);
             if (movies!= null && !movies.isEmpty()) {
                 //Displaying the movie image to the user
                 showMovieDataView();
-                mMovieAdapter.setmMoviedata(movies);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mMovieAdapter.setmMoviedata(movies);
+                    }
+                });
+
             }else {
                 showErrorMessage();
             }
         }
     }
+
+
     @Override
     // This method initialize the contents of the Activity's options menu.
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -163,8 +193,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Send all the params to the details Activity when it is created
+     * @param image
+     * @param title
+     * @param overview
+     * @param rating
+     * @param date
+     * @param id
+     * @param isFav
+     */
     @Override
-    public void onClick(String image, String title, String overview, String rating, String date, String id ){
+    public void onClick(String image, String title, String overview, String rating, String date, String id, boolean isFav, String buttonText){
         Context context = this;
         Class destinationClass = MovieDetails.class;
         //Creating Intent
@@ -177,12 +218,45 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         intent.putExtra("rating", rating);
         intent.putExtra("date", date);
         intent.putExtra("id", id);
+        intent.putExtra("isFavorite", isFav);
+        intent.putExtra("buttonText", buttonText);
         startActivity(intent);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("movie", mMovie);
+        outState.putParcelableArrayList("movie", (ArrayList<? extends Parcelable>) mMovie);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //retrieving changes to the database
+        if (sortBy.contains("settings_sort_by_favorite_movie")){
+            setUpViewModel();
+        }else {//Just loading the data fetch by api call
+
+            loadMovieData();
+        }
+    }
+
+    /**
+     * Getting the data whenever we get back from the MovieDetail.
+     * That way if a movie has been taken out of the database,
+     * it willbe pictured in the the main
+     */
+    private void setUpViewModel(){
+
+        //Declare the ViewModel
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        viewModel.getMovie().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                mMovieAdapter.setmMoviedata(movies);
+            }
+        });
     }
 }

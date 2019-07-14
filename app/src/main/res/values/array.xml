@@ -4,6 +4,7 @@
     <string-array name="settings_order_by_labels">
         <item>@string/settings_sort_by_most_popular_label</item>
         <item>@string/settings_sort_by_most_rated_label</item>
+        <item>@string/settings_sort_by_favorite_movie</item>
     </string-array>
 
     <!--<string-array name="settings_order_by_values">-->

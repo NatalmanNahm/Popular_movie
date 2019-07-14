@@ -5,26 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.TestLooperManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.popmovie.Adapters.ReviewsAdapter;
+import com.example.android.popmovie.Adapters.TrailerAdapter;
+import com.example.android.popmovie.Database.AppDatabase;
+import com.example.android.popmovie.Database.AppExecutors;
 import com.example.android.popmovie.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 public class MovieDetails extends AppCompatActivity implements TrailerAdapter.TrailerAdapterOnClickHandler{
@@ -36,6 +33,8 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     private String ratingText;
     private String dateText;
     private String id;
+    private boolean isFavMovie;
+    private String buttonText;
 
     private ImageView mMovieImage;
     private TextView title;
@@ -55,6 +54,9 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     private LinearLayoutManager mReviewsList;
     private ReviewsAdapter mReviewsAdapter;
     private RecyclerView mReviewsRecyclerView;
+    private Button mAddFavMovie;
+
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +69,17 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         overview = (TextView) findViewById(R.id.overview);
         rating = (TextView) findViewById(R.id.rating);
         date = (TextView) findViewById(R.id.realease_date);
+        mAddFavMovie = (Button) findViewById(R.id.add_fav_movie);
+
 
         mTrailersRecyclerView = (RecyclerView) findViewById(R.id.trailer_recycle);
         mErrorTrailer = (TextView) findViewById(R.id.no_trailer);
 
         mReviewsRecyclerView = (RecyclerView) findViewById(R.id.review_recycle);
         mErrorReview = (TextView) findViewById(R.id.no_review);
+
+        //Initialize member variable for the data base
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         Intent intent = getIntent();
 
@@ -101,8 +108,83 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
                 //Just getting the Id to get Json Data
                 id = intent.getStringExtra("id");
+
+                //Getting the statement of the movie
+                isFavMovie = intent.getBooleanExtra("isFavorite", false);
+
+                //Getting Button Text
+                buttonText = intent.getStringExtra("buttonText");
+                mAddFavMovie.setText(buttonText);
+
+                //check if movie is in the database
+                //If yes Set the button to delete Favorite
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        String savedId = mDb.favoriteMovieDao().idSaved(id);
+
+                        if (id.equalsIgnoreCase(savedId)){
+                            mAddFavMovie.setText("Delete Favorite");
+                        }else {
+                            mAddFavMovie.setText(buttonText);
+                        }
+                    }
+                });
             }
         }
+
+        //Adding Movie data to the database when the button is clicked
+        mAddFavMovie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //If not a favMovie add movie
+                if (!isFavMovie ){
+                    buttonText = "Delete Favorite";
+                    mAddFavMovie.setText(buttonText);
+                    isFavMovie = true;
+
+                    final Movie  favMovie =
+                            new Movie(id, titleText, imageText, overViewText, ratingText, dateText, isFavMovie, buttonText);
+
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Actually adding the favorite data we got to the database
+                            Movie savedMovie = mDb.favoriteMovieDao().toBeDelete(id);
+                            String savedId = mDb.favoriteMovieDao().idSaved(id);
+
+                            //if there is no saved Movie in the database, Add one
+                            if (savedId == null){
+                                mDb.favoriteMovieDao().addFavMov(favMovie);
+
+                            //if there is then delete
+                            } else if (savedId.equalsIgnoreCase(id)){
+                                mDb.favoriteMovieDao().deleteFavMovie(savedMovie);
+                                finish();
+                            //if none is valid then add the movie
+                            } else {
+                                mDb.favoriteMovieDao().addFavMov(favMovie);
+                            }
+                        }
+                    });
+
+                //Delete movie fromm my Favorite
+                } else {
+                    buttonText = "Add As Favorite";
+                    mAddFavMovie.setText(buttonText);
+                    isFavMovie = true;
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Movie movie = mDb.favoriteMovieDao().toBeDelete(id);
+                            mDb.favoriteMovieDao().deleteFavMovie(movie);
+                            finish();
+                        }
+                    });
+                }
+            }
+        });
 
         //Creating a linear manager to the Trailers
         //Creating a Recycle and setting it to the Linear manager
@@ -132,10 +214,15 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
     @Override
     public void onClick(String key) {
         Context context = this;
-
+        //Play youtube Video
         playYoutubeVideo(context, key);
     }
 
+    /**
+     * this is to open the Youtube app and play the trailer using the the key
+     * @param context
+     * @param key
+     */
     public static void playYoutubeVideo(Context context, String key){
         Intent youtubeAppIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("Vnd.youtube:" + key));
         Intent youtubeWebIntent = new Intent(Intent.ACTION_VIEW,
@@ -148,6 +235,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
     }
 
+    //Asynctask for trailer
     public class FetchTrailerTask extends AsyncTask<String, Void, ArrayList<Trailers>>{
 
         @Override
@@ -172,6 +260,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
         }
     }
 
+    //Asynctask for review
     public class FetchReviewsTask extends AsyncTask<String, Void, ArrayList<Reviews>>{
 
         @Override
@@ -191,4 +280,5 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
             }
         }
     }
+
 }

@@ -8,28 +8,37 @@
     android:paddingTop="12dp">
 
     <View
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="#C62828"
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp"
+        android:layout_marginBottom="10dp"
         />
 
-    <TextView
-            android:id="@+id/trailer_label"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="Trailer III" />
+        android:orientation="vertical"
+        android:background="@drawable/list_item_selector"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
-    <TextView
-        android:id="@+id/name_trailer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        tools:text="Shazam and spider"
-        android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/trailer_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Trailer III" />
+
+        <TextView
+            android:id="@+id/name_trailer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            tools:text="Shazam and spider"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
 
 </LinearLayout>

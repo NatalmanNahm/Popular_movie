@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- Trailer Selector color -->
+    <color name="trailer_selector">#FFCDD2</color>
+
+    <!-- Button selector color -->
+    <color name="favorite_button_selector">#00796B</color>
+    <color name="favorite_button_selector_unselected">#26A69A</color>
 </resources>

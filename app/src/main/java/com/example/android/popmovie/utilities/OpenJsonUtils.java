@@ -70,9 +70,9 @@ public class OpenJsonUtils {
 
                 String imageConstruct = IMAGE_URL + IMAGE_SIZE + image;
 
-
-
-                arrayList.add(new Movie(title, overview, rating, dateRelease, imageConstruct, id));
+                boolean isFavorite = false;
+                String buttonText = "Add As Favorite";
+                arrayList.add(new Movie(id, title, imageConstruct, overview, rating, dateRelease, isFavorite, buttonText));
 
             }
 
