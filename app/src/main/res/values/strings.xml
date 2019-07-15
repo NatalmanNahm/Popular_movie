@@ -7,4 +7,24 @@
     <string name="settings_sort_by_most_popular_label">Most Popular</string>
     <string name="settings_sort_by_most_rated_label">Most Rated</string>
     <string name="settings_sort_by_favorite_movie">My Favorite Movies</string>
+
+    <!-- Favorite Button String -->
+    <string name="mark_as_favorite">Add as Favorite </string>
+    <string name="delete_favorite">Delete Favorite </string>
+
+    <!-- Trailer String -->
+    <string name="trailer_string">Trailers</string>
+    <string name="trailer_label">Trailer</string>
+
+    <!-- Review String -->
+    <string name="review_string">Reviews</string>
+
+    <!-- Error messages -->
+    <string name="no_reviews_error_message">No Reviews</string>
+    <string name="no_trailer_error_message">No Trailers</string>
+    <string name="error_message">An error has occurred, please try again</string>
+
+    <!-- Rating -->
+    <string name="rating_String">Rating: </string>
+    <string name="rating_point_10">/10</string>
 </resources>

@@ -124,7 +124,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                         String savedId = mDb.favoriteMovieDao().idSaved(id);
 
                         if (id.equalsIgnoreCase(savedId)){
-                            mAddFavMovie.setText("Delete Favorite");
+                            mAddFavMovie.setText(R.string.delete_favorite);
                         }else {
                             mAddFavMovie.setText(buttonText);
                         }
@@ -140,7 +140,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
                 //If not a favMovie add movie
                 if (!isFavMovie ){
-                    buttonText = "Delete Favorite";
+                    buttonText = getString(R.string.delete_favorite);
                     mAddFavMovie.setText(buttonText);
                     isFavMovie = true;
 
@@ -171,7 +171,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
 
                 //Delete movie fromm my Favorite
                 } else {
-                    buttonText = "Add As Favorite";
+                    buttonText = getString(R.string.mark_as_favorite);
                     mAddFavMovie.setText(buttonText);
                     isFavMovie = true;
                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
