@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,14 +36,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private List<Movie> mMovie = new ArrayList<>();
     private TextView mErrorMessage;
     private ProgressBar mLoading;
+    private int scrollPosition;
 
     private GridLayoutManager gridLayoutManager;
+    private Parcelable savedGridLayoutManager;
 
     //create AppDatabase member variable for the Database
     private AppDatabase mDb;
 
     private SharedPreferences sharedPrefs;
     private String sortBy;
+    private static String KEY_INSTANCE_SAVED_POSITION = "movie_position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         //Creating a gridview where we can add all the movie item we get from the movie data
         //or Get back to where we left by saving a reference to the gridView
         gridLayoutManager =
-                new GridLayoutManager(this,2,GridLayoutManager.VERTICAL,false);
+                new GridLayoutManager(this,calculateNoOfColumns(this),GridLayoutManager.VERTICAL,false);
 
         //set the gridview to the recycleView
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -77,13 +81,26 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         //creating a progress bar that let the user know that there data is been loaded
         mLoading = (ProgressBar) findViewById(R.id.loading_circle);
 
-        //Saving the position where we where at
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movie")){
-            loadMovieData();
-        }else {
-            mMovie = savedInstanceState.getParcelableArrayList("movie");
-            loadMovieData();
+        //Saving the position where we were at
+//        if (savedInstanceState == null || !savedInstanceState.containsKey("movie")){
+//            if (savedInstanceState != null) {
+//                savedGridLayoutManager = savedInstanceState.getParcelable(KEY_INSTANCE_SAVED_POSITION);
+//            }
+//            loadMovieData();
+//            if (savedGridLayoutManager != null){
+//                gridLayoutManager.onRestoreInstanceState((Parcelable) savedGridLayoutManager);
+//            }
+//
+//        }else {
+//            mMovie = savedInstanceState.getParcelableArrayList("movie");
+//            loadMovieData();
+//        }
+
+        if (savedInstanceState != null){
+            savedGridLayoutManager = savedInstanceState.getParcelable(KEY_INSTANCE_SAVED_POSITION);
+            gridLayoutManager.onRestoreInstanceState(savedGridLayoutManager);
         }
+        loadMovieData();
 
     }
 
@@ -169,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                     }
                 });
 
+                gridLayoutManager.onRestoreInstanceState(savedGridLayoutManager);
+
             }else {
                 showErrorMessage();
             }
@@ -225,8 +244,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("movie", (ArrayList<? extends Parcelable>) mMovie);
+//        outState.putParcelableArrayList("movie", (ArrayList<? extends Parcelable>) mMovie);
         super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_INSTANCE_SAVED_POSITION, gridLayoutManager.onSaveInstanceState());
+
     }
 
     @Override
@@ -258,5 +279,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 mMovieAdapter.setmMoviedata(movies);
             }
         });
+    }
+
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int scalingFactor = 200;
+        int noOfColumns = (int) (dpWidth / scalingFactor);
+        if(noOfColumns < 2)
+            noOfColumns = 2;
+        return noOfColumns;
     }
 }
