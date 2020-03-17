@@ -169,7 +169,7 @@ public class MovieDetails extends AppCompatActivity implements TrailerAdapter.Tr
                         }
                     });
 
-                //Delete movie fromm my Favorite
+                //Delete movie from my Favorite
                 } else {
                     buttonText = getString(R.string.mark_as_favorite);
                     mAddFavMovie.setText(buttonText);
